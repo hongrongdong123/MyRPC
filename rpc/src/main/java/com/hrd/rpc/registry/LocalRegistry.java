@@ -1,5 +1,7 @@
 package com.hrd.rpc.registry;
 
+import com.hrd.rpc.model.ServiceMetaInfo;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,31 +14,33 @@ public class LocalRegistry {
      * key服务名称
      * value真正提供服务的类
      */
-    private static final Map<String, Class<?>> map = new ConcurrentHashMap<>();
+    private static final Map<String, Class<?>> serviceImplmap = new ConcurrentHashMap<>();
+
 
     /**
      * 注册服务
      * @param serviceName
      * @param implClass
      */
-    public static  void registry(String serviceName, Class<?> implClass) {
-        map.put(serviceName, implClass);
+    public static  void registry(String serviceName, Class<?> implClass, ServiceMetaInfo serviceMetaInfo) {
+        serviceImplmap.put(serviceName, implClass);
     }
 
     /**
-     * 获取服务
+     * 获取服务实例
      * @param serviceName
      * @return
      */
-    public static Class<?> get(String serviceName) {
-        return map.get(serviceName);
+    public static Class<?> getServiceImpl(String serviceName) {
+        return serviceImplmap.get(serviceName);
     }
+
 
     /**
      * 删除服务
      * @param serviceName
      */
     public static void remove(String serviceName) {
-        map.remove(serviceName);
+        serviceImplmap.remove(serviceName);
     }
 }

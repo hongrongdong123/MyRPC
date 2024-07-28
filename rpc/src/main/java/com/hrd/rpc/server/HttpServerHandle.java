@@ -5,8 +5,6 @@ import com.hrd.rpc.model.RpcResponse;
 import com.hrd.rpc.registry.LocalRegistry;
 import com.hrd.rpc.serializer.JdkSerializer;
 import com.hrd.rpc.serializer.Serializer;
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,7 +37,7 @@ public class HttpServerHandle {
             RpcRequest rpcRequest = serializer.deserialize(bodyBytes, RpcRequest.class);
 
             //服务发现
-            Class<?> implClass = LocalRegistry.get(rpcRequest.getServiceName());
+            Class<?> implClass = LocalRegistry.getServiceImpl(rpcRequest.getServiceName());
             Method method = implClass.getMethod(rpcRequest.getMethodName(), rpcRequest.getParameterTypes());
             Object result = method.invoke(implClass.newInstance(), rpcRequest.getParameters());
 
