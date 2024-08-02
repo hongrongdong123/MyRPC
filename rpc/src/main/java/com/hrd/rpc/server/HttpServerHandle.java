@@ -1,10 +1,13 @@
 package com.hrd.rpc.server;
 
+import com.hrd.rpc.RpcApplication;
 import com.hrd.rpc.model.RpcRequest;
 import com.hrd.rpc.model.RpcResponse;
 import com.hrd.rpc.registry.LocalRegistry;
 import com.hrd.rpc.serializer.JdkSerializer;
+import com.hrd.rpc.serializer.JsonSerializer;
 import com.hrd.rpc.serializer.Serializer;
+import com.hrd.rpc.serializer.SerializerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +31,7 @@ public class HttpServerHandle {
         RpcResponse rpcResponse = new RpcResponse();
         try {
             //指定序列化器
-            Serializer serializer = new JdkSerializer();
+            Serializer serializer = SerializerFactory.getInstance(RpcApplication.getRpcConfig().getSerializer());
 
             // 从请求中读取字节数据
             byte[] bodyBytes = readBytesFromRequest(req);

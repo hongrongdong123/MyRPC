@@ -14,7 +14,9 @@ import com.hrd.rpc.registry.LocalRegistry;
 import com.hrd.rpc.registry.Registry;
 import com.hrd.rpc.registry.RegistryFactory;
 import com.hrd.rpc.serializer.JdkSerializer;
+import com.hrd.rpc.serializer.JsonSerializer;
 import com.hrd.rpc.serializer.Serializer;
+import com.hrd.rpc.serializer.SerializerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
@@ -35,7 +37,7 @@ public class ServiceProxy implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         //指定序列化器
-        Serializer serializer = new JdkSerializer();
+        Serializer serializer = SerializerFactory.getInstance(RpcApplication.getRpcConfig().getSerializer());
         //构造请求
 
         String serviceName = method.getDeclaringClass().getName();
