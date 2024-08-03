@@ -1,0 +1,5 @@
+random=com.hrd.rpc.loadbalancer.RandomLoadbalancer
+weightedRandom=com.hrd.rpc.loadbalancer.WeightedRandomLoadbalancer
+roundRobin=com.hrd.rpc.loadbalancer.RoundRobinLoadbalancer
+weightedRoundRobin=com.hrd.rpc.loadbalancer.WeightedRoundRobinLoadbalancer
+consistentHash=com.hrd.rpc.loadbalancer.ConsistentHashLoadbalancer

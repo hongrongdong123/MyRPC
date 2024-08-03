@@ -31,6 +31,11 @@ public class ServiceMetaInfo {
     private Integer servicePort;
 
     /**
+     * 权重（用于负载均衡）
+     */
+    private Integer serverWeight = 0;
+
+    /**
      * 服务分组（暂未实现）
      */
     private String serviceGroup = "default";

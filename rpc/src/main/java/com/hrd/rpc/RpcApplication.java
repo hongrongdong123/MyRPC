@@ -25,7 +25,7 @@ public class RpcApplication {
         Registry registry = RegistryFactory.getRegistry(registryConfig.getRegistry());
         registry.init(registryConfig);
         log.info("registry init, config = {}", registryConfig);
-        //初始化序列化器
+
 
     }
 

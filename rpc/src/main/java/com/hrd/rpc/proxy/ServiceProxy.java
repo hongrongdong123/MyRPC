@@ -7,8 +7,12 @@ import cn.hutool.http.HttpResponse;
 import com.hrd.rpc.RpcApplication;
 import com.hrd.rpc.config.RpcConfig;
 import com.hrd.rpc.constant.RpcConstant;
+import com.hrd.rpc.convert.ServiceMetaInfoToServerModel;
+import com.hrd.rpc.loadbalancer.LoadBalancer;
+import com.hrd.rpc.loadbalancer.LoadbalancerFactory;
 import com.hrd.rpc.model.RpcRequest;
 import com.hrd.rpc.model.RpcResponse;
+import com.hrd.rpc.model.ServerModel;
 import com.hrd.rpc.model.ServiceMetaInfo;
 import com.hrd.rpc.registry.LocalRegistry;
 import com.hrd.rpc.registry.Registry;
@@ -21,6 +25,7 @@ import com.hrd.rpc.serializer.SerializerFactory;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.net.InetAddress;
 import java.util.List;
 
 
@@ -52,7 +57,6 @@ public class ServiceProxy implements InvocationHandler {
             //序列化
             byte[] requestSerialized = serializer.serialize(rpcRequest);
             //发送请求
-            //获得服务名称、服务信息id，以便从注册中心获得服务实例serviceInstance
 
             //服务发现
             RpcConfig rpcConfig = RpcApplication.getRpcConfig();
@@ -65,12 +69,19 @@ public class ServiceProxy implements InvocationHandler {
                 throw new RuntimeException("暂无服务地址");
             }
             //负载均衡（暂未实现）
-            String post = serviceMetaInfoList.get(0).getServiceAddress();
+            //获取消费方的ip，用于一致性哈希负载均衡时路由对应的服务端服务器
+            InetAddress localHost = InetAddress.getLocalHost();
+            String clientIp = localHost.getHostAddress();
+            //
+            LoadBalancer loadbalancer = LoadbalancerFactory.getLoadbalancer(rpcConfig.getLoadBalance());
+            ServerModel serviceServer = loadbalancer.select(clientIp, ServiceMetaInfoToServerModel.convert(serviceMetaInfoList));
+            //ServiceMetaInfo service = LoadbalanceFactory.getLoadblance.select(String clientIp, List<ServiceMetaInfo>);
+            String post = serviceServer.getServiceAddress();
             // 服务的host、port
             HttpResponse httpResponse = HttpRequest.post(post)
                     .body(requestSerialized)
                     .execute();
-
+            System.out.println(post);
             //反序列化
             byte[] bytes = httpResponse.bodyBytes();
             RpcResponse rpcResponse = serializer.deserialize(bytes, RpcResponse.class);

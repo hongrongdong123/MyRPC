@@ -1,5 +1,6 @@
 package com.hrd.rpc.config;
 
+import com.hrd.rpc.loadbalancer.LoadbalanceKeys;
 import com.hrd.rpc.serializer.SerializerKeys;
 import lombok.Data;
 
@@ -30,9 +31,19 @@ public class RpcConfig {
     private Integer serverPort = 8080;
 
     /**
+     * 服务器权重，用于加权的负载均衡策略
+     */
+    private Integer serverWeight = 0;
+
+    /**
      * 序列化器
      */
     private String serializer = SerializerKeys.JDK;
+
+    /**
+     * 负载均衡器
+     */
+    private String loadBalance = LoadbalanceKeys.WEIGHTED_ROUND_ROBIN;
 
     /**
      * 注册中心配置

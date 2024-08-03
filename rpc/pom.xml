@@ -56,6 +56,12 @@
             <artifactId>hessian</artifactId>
             <version>4.0.66</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-configuration2</artifactId>
+            <version>2.7</version>
+        </dependency>
+
     </dependencies>
     <build>
         <finalName>rpc</finalName>

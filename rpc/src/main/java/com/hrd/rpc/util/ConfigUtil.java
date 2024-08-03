@@ -3,11 +3,13 @@ package com.hrd.rpc.util;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.setting.dialect.Props;
 import com.hrd.rpc.config.RpcConfig;
+import com.hrd.rpc.model.ServerModel;
 
 /**
  * description:
  */
 public class ConfigUtil {
+
 
     /**
      * 加载配置对象
@@ -37,4 +39,8 @@ public class ConfigUtil {
         Props props = new Props(stringBuilder.toString());
         return props.toBean(tClass, prefix);
     }
+
+//
+
+
 }

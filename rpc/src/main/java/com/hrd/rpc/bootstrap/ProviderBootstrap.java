@@ -8,6 +8,7 @@ import com.hrd.rpc.model.ServiceRegisterInfo;
 import com.hrd.rpc.registry.LocalRegistry;
 import com.hrd.rpc.registry.Registry;
 import com.hrd.rpc.registry.RegistryFactory;
+import com.hrd.rpc.util.ConfigUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -36,6 +37,7 @@ public class ProviderBootstrap {
             Registry registry = RegistryFactory.getRegistry(registryConfig.getRegistry());
             ServiceMetaInfo serviceMetaInfo = new ServiceMetaInfo();
             serviceMetaInfo.setServiceName(serviceName);
+            serviceMetaInfo.setServerWeight(rpcConfig.getServerWeight());
             serviceMetaInfo.setServiceVersion(rpcConfig.getVersion());
             serviceMetaInfo.setServiceHost(rpcConfig.getServerHost());
             serviceMetaInfo.setServicePort(rpcConfig.getServerPort());
@@ -43,6 +45,7 @@ public class ProviderBootstrap {
             //本地注册
             LocalRegistry.registry(serviceName, serviceImpl, serviceMetaInfo);
 
+            //服务中心注册
             try {
                 registry.register(serviceMetaInfo);
             } catch (Exception e) {
