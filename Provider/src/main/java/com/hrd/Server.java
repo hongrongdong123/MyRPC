@@ -10,6 +10,7 @@ import com.hrd.rpc.registry.Registry;
 import com.hrd.rpc.registry.RegistryFactory;
 import com.hrd.rpc.registry.ZooKeeperRegistry;
 import com.hrd.rpc.server.HttpServer;
+import com.hrd.rpc.transport.netty.NettyServer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ public class Server {
         Integer serverPort = rpcConfig.getServerPort();
 
         //创建tomcat服务器
-        new HttpServer().start(serverHost, serverPort);
-
+        //new HttpServer().start(serverHost, serverPort);
+        NettyServer.startServer(serverHost, serverPort);
     }
 }

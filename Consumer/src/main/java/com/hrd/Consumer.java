@@ -14,8 +14,8 @@ public class Consumer {
         ConsumerBootstrap.init();
 
         HelloService helloService = ServiceProxyFactory.getProxy(HelloService.class);
-        for (int i = 0; i < 10; i++) {
-            String result = helloService.hello("word");
+        for (int i = 0; i < 1; i++) {
+            String result = helloService.hello("洪荣东");
             System.out.println(result);
         }
 
