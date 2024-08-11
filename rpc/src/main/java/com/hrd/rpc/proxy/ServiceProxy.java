@@ -2,24 +2,22 @@ package com.hrd.rpc.proxy;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpResponse;
 import com.hrd.rpc.RpcApplication;
 import com.hrd.rpc.config.RpcConfig;
 import com.hrd.rpc.constant.RpcConstant;
 import com.hrd.rpc.convert.ServiceMetaInfoToServerModel;
+import com.hrd.rpc.fault.retry.RetryStrategy;
+import com.hrd.rpc.fault.retry.RetryStrategyFactory;
+import com.hrd.rpc.fault.tolerant.TolerantStrategy;
+import com.hrd.rpc.fault.tolerant.TolerantStrategyFactory;
 import com.hrd.rpc.loadbalancer.LoadBalancer;
 import com.hrd.rpc.loadbalancer.LoadbalancerFactory;
 import com.hrd.rpc.model.RpcRequest;
 import com.hrd.rpc.model.RpcResponse;
 import com.hrd.rpc.model.ServerModel;
 import com.hrd.rpc.model.ServiceMetaInfo;
-import com.hrd.rpc.registry.LocalRegistry;
 import com.hrd.rpc.registry.Registry;
 import com.hrd.rpc.registry.RegistryFactory;
-import com.hrd.rpc.serializer.JdkSerializer;
-import com.hrd.rpc.serializer.JsonSerializer;
 import com.hrd.rpc.serializer.Serializer;
 import com.hrd.rpc.serializer.SerializerFactory;
 import com.hrd.rpc.transport.netty.NettyClient;
@@ -60,9 +58,8 @@ public class ServiceProxy implements InvocationHandler {
                 .build();
 
         try {
-            //序列化
+            //序列化（其实在netty的编码器中会进行序列化，这里进行序列化的作用时计算消息体的长度）
             byte[] requestSerialized = serializer.serialize(rpcRequest);
-            //发送请求
 
             //服务发现
             RpcConfig rpcConfig = RpcApplication.getRpcConfig();
@@ -74,17 +71,15 @@ public class ServiceProxy implements InvocationHandler {
             if (CollUtil.isEmpty(serviceMetaInfoList)) {
                 throw new RuntimeException("暂无服务地址");
             }
+
             //负载均衡
             //获取消费方的ip，用于一致性哈希负载均衡时路由对应的服务端服务器
             InetAddress localHost = InetAddress.getLocalHost();
             String clientIp = localHost.getHostAddress();
-            //
+            //获取服务方地址
             LoadBalancer loadbalancer = LoadbalancerFactory.getLoadbalancer(rpcConfig.getLoadBalance());
             ServerModel serviceServer = loadbalancer.select(clientIp, ServiceMetaInfoToServerModel.convert(serviceMetaInfoList));
-            //ServiceMetaInfo service = LoadbalanceFactory.getLoadblance.select(String clientIp, List<ServiceMetaInfo>);
             String post = serviceServer.getServiceAddress();
-            // 服务的host、port
-
             //使用netty发送请求
             //构造自定义协议的消息
             ProtocolMessage<RpcRequest> requestMessage = new ProtocolMessage<>();
@@ -94,13 +89,25 @@ public class ServiceProxy implements InvocationHandler {
             header.setSerializer((byte) ProtocolMessageSerializerEnum.getEnumByValue(RpcApplication.getRpcConfig().getSerializer()).getKey());
             header.setType((byte) ProtocolMessageTypeEnum.REQUEST.getKey());
             header.setBodyLength(requestSerialized.length);
-            // 生成全局请求 ID
-            header.setRequestId(IdUtil.getSnowflakeNextId());
+            header.setRequestId(IdUtil.getSnowflakeNextId());// 生成全局请求 ID
             requestMessage.setHeader(header);
             requestMessage.setBody(rpcRequest);
-            //发送reques往服务端
-            RpcResponse rpcResponse= NettyClient.initAndSend(
-                    serviceServer.getServiceHost(), serviceServer.getServicePort(), requestMessage);
+            //加入重试机制
+            RpcResponse rpcResponse;
+            String retryStrategy = RpcApplication.getRpcConfig().getRetryStrategy();
+            RetryStrategy retry = RetryStrategyFactory.getInstance(retryStrategy);
+            try {
+                 rpcResponse = retry.doRetry(() ->
+                        NettyClient.initAndSend(serviceServer.getServiceHost(),
+                                serviceServer.getServicePort(), requestMessage));
+            } catch (Exception e) {
+                //容错策略
+                String tolerantStrategy = RpcApplication.getRpcConfig().getTolerantStrategy();
+                TolerantStrategy tolerant = TolerantStrategyFactory.getInstance(tolerantStrategy);
+                rpcResponse = tolerant.doTolerant(serviceMetaInfoList, requestMessage, loadbalancer, clientIp,
+                        ()->NettyClient.initAndSend(serviceServer.getServiceHost(),
+                                serviceServer.getServicePort(), requestMessage));
+            }
             return rpcResponse.getData();
         } catch (IOException e) {
             e.printStackTrace();

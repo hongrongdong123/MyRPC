@@ -1,0 +1,6 @@
+failback=com.hrd.rpc.fault.tolerant.Failback
+failfast=com.hrd.rpc.fault.tolerant.Failfast
+failover=com.hrd.rpc.fault.tolerant.Failover
+failsafe=com.hrd.rpc.fault.tolerant.Failsafe
+forking=com.hrd.rpc.fault.tolerant.Forking
+broadcast=com.hrd.rpc.fault.tolerant.Broadcast

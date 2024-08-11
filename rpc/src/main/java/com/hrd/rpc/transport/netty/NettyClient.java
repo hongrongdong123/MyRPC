@@ -15,7 +15,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * description:
+ * description:netty客户端
  */
 public class NettyClient {
 
@@ -65,10 +65,5 @@ public class NettyClient {
             }
         }
     }
-
-//    public static RpcResponse doRequest(String serverHost, Integer serverPort) {
-//
-//    }
-
 
 }

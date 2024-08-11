@@ -1,5 +1,7 @@
 package com.hrd.rpc.config;
 
+import com.hrd.rpc.fault.retry.RetryStrategyKeys;
+import com.hrd.rpc.fault.tolerant.TolerantStrategyKeys;
 import com.hrd.rpc.loadbalancer.LoadbalanceKeys;
 import com.hrd.rpc.serializer.SerializerKeys;
 import lombok.Data;
@@ -43,8 +45,17 @@ public class RpcConfig {
     /**
      * 负载均衡器
      */
-    private String loadBalance = LoadbalanceKeys.WEIGHTED_ROUND_ROBIN;
+    private String loadBalance = LoadbalanceKeys.RANDOM;
 
+    /**
+     * 重试策略
+     */
+    private String retryStrategy = RetryStrategyKeys.FIXED_INTERVAL;
+
+    /**
+     * 容错策略
+     */
+    private String tolerantStrategy = TolerantStrategyKeys.FAIL_OVER;
     /**
      * 注册中心配置
      */

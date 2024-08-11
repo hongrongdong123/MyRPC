@@ -1,0 +1,3 @@
+fixedInterval=com.hrd.rpc.fault.retry.FixedIntervalRetryStratey
+no=com.hrd.rpc.fault.retry.NoRetryStrategy
+

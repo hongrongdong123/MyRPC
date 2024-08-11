@@ -14,6 +14,7 @@ public class RandomLoadbalancer implements LoadBalancer{
     public ServerModel select(String clientIP, List<ServerModel> serverModelList) {
         // 随机数范围[0,serverListSize)
         int index = ThreadLocalRandom.current().nextInt(serverModelList.size());
+        System.out.println(serverModelList.get(index).getServiceAddress());
         return serverModelList.get(index);
     }
 }

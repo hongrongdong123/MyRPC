@@ -5,6 +5,7 @@ import com.hrd.rpc.bootstrap.ProviderBootstrap;
 import com.hrd.rpc.config.RpcConfig;
 import com.hrd.rpc.model.ServiceRegisterInfo;
 import com.hrd.rpc.server.HttpServer;
+import com.hrd.rpc.transport.netty.NettyServer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,8 @@ public class Server3 {
         Integer serverPort = rpcConfig.getServerPort();
 
         //创建tomcat服务器
-        new HttpServer().start(serverHost, serverPort);
+        //new HttpServer().start(serverHost, serverPort);
+        NettyServer.startServer(serverHost, serverPort);
 
     }
 }

@@ -25,6 +25,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         try {
             //接收请求
+            Thread.sleep(5000);
             ProtocolMessage<RpcRequest> requeatMessage = (ProtocolMessage<RpcRequest>) msg;
             System.out.println("服务端收到的消息是:" + requeatMessage);
             RpcRequest rpcRequest = requeatMessage.getBody();
