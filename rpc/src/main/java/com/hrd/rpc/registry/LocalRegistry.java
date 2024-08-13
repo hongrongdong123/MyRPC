@@ -22,7 +22,7 @@ public class LocalRegistry {
      * @param serviceName
      * @param implClass
      */
-    public static  void registry(String serviceName, Class<?> implClass, ServiceMetaInfo serviceMetaInfo) {
+    public static  void registry(String serviceName, Class<?> implClass) {
         serviceImplmap.put(serviceName, implClass);
     }
 

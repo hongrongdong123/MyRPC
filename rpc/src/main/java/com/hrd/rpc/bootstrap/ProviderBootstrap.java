@@ -43,7 +43,7 @@ public class ProviderBootstrap {
             serviceMetaInfo.setServicePort(rpcConfig.getServerPort());
 
             //本地注册
-            LocalRegistry.registry(serviceName, serviceImpl, serviceMetaInfo);
+            LocalRegistry.registry(serviceName, serviceImpl);
 
             //服务中心注册
             try {

@@ -21,7 +21,7 @@ public class ProtocolMessageDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) throws Exception {
-        System.out.println("进行解码");
+
         // 检查是否有足够的字节用于读取头部
         if (byteBuf.readableBytes() < ProtocolConstant.MESSAGE_HEADER_LENGTH) {
             return;
@@ -33,9 +33,9 @@ public class ProtocolMessageDecoder extends ByteToMessageDecoder {
         byte magic = byteBuf.readByte();
 
         // 校验魔数
-        if (magic != ProtocolConstant.PROTOCOL_MAGIC) {
-            throw new RuntimeException("消息 magic 非法");
-        }
+//        if (magic != ProtocolConstant.PROTOCOL_MAGIC) {
+//            throw new RuntimeException("消息 magic 非法");
+//        }
         header.setMagic(magic);
         header.setVersion(byteBuf.readByte());
         header.setSerializer(byteBuf.readByte());

@@ -11,7 +11,7 @@ import java.util.concurrent.*;
 public class FixedIntervalRetryStratey implements RetryStrategy{
 
     private int retryTimes = 3; // 重试次数
-    private long timeoutMillis = 3000L; // 超时时间3秒
+    private long timeoutMillis = 5000L; // 超时时间3秒
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2); // 增加线程数
     private long retryIntervalMillis = 1000L; // 每次重试的间隔时间
 

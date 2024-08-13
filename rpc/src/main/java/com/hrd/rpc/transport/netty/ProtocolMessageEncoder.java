@@ -14,7 +14,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
 public class ProtocolMessageEncoder extends MessageToByteEncoder {
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, Object o, ByteBuf byteBuf) throws Exception {
-        System.out.println("进行编码");
+
         if(!(o instanceof ProtocolMessage<?>)) {
             throw new Exception(String.format("Unknown type: %s!", o.getClass().getCanonicalName()));
         }
